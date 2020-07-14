@@ -1,0 +1,25 @@
+name: build image
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  scu_key: xxxxxxxxxxxxxxxxxxxx
+
+defaults:
+  run:
+    shell: bash
+    
+jobs:
+  build:
+    name: build docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone project
+        if: ${{ github.event_name == 'push' }}
+        continue-on-error: false
+        run: |
+          git clone https://github.com/$GITHUB_REPOSITORY .
+          docker build -t trojan . 
