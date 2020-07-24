@@ -18,8 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: clone project
-        if: ${{ github.event_name == 'push' }}
         continue-on-error: false
         run: |
           git clone https://github.com/$GITHUB_REPOSITORY .
+      
+      - name: build
+        run: |
           docker build -t trojan . 
+      
+      - name: test
+        run: |
+          docker create --name trojan-server -v /var/log/trojan/:/var/log/trojan/ -p 443:443 --restart always trojan -c /etc/trojan/trojan-server.json
+          docker start trojan-server
+          docker ps
